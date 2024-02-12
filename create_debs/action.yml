@@ -7,6 +7,9 @@ inputs:
   platform:
     description: 'Platform'
     default: 'Linux/AMD64'  
+  token:
+    description: 'GitHub token'
+    required: true
 
 runs:
   using: composite
@@ -16,5 +19,5 @@ runs:
         mkdir ${{ github.workspace }}/debs
         docker run --rm -v ${{ github.workspace }}:/ws -v ${{ github.workspace }}/debs:/debs \
            -v ${{ github.action_path }}/scripts:/scripts -w /ws --platform ${{inputs.platform}} \
-           ros:${{inputs.rosdistro}} bash /scripts/build.bash
+           ros:${{inputs.rosdistro}} bash /scripts/build.bash ${{inputs.token}}
       shell: bash

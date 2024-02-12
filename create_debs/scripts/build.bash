@@ -4,6 +4,15 @@ pushd .
 apt update && apt upgrade -y 
 apt install -y python3-bloom fakeroot debhelper git gpg dh-python
 
+pushd /
+git config --global url."https://x-access-token:$1@github.com/".insteadOf "https://github.com/"
+git clone https://github.com/ForteFibre/fortefibre_apt_repository.git
+gpg --dearmor -o /etc/apt/keyrings/fortefibre-key.gpg /ci_test/public/public-key
+echo "deb [signed-by=/etc/apt/keyrings/fortefibre-key.gpg] file:///ci_test/public jammy main " > /etc/apt/sources.list.d/fortefibre.list
+echo "yaml file:///ci_test/public/rosdep/${ROS_DISTRO}_pkg.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list
+apt update
+popd
+
 bash /opt/ros/${ROS_DISTRO}/setup.bash 
 rosdep update 
 rosdep install -i --from-paths . -y 
