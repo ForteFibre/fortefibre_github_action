@@ -1,0 +1,39 @@
+name: Build docker image for package building
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE: ghcr.io/fortefibre/ros-buildroot
+
+jobs:
+  build:
+    runs-on: GPU
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./buildroot
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ env.IMAGE }}
+          platforms: linux/amd64,linux/arm64
