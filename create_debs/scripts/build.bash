@@ -32,7 +32,7 @@ for ITEM in $PKG_LIST; do
 
     pushd $PKG_PATH
     bloom-generate rosdebian
-    fakeroot debian/rules binary
+    fakeroot debian/rules binary -j4
     apt install -y ../$DEB_NAME*.deb
     mv ../$DEB_NAME*.deb /debs
     popd
