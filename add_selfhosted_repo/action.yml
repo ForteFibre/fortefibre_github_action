@@ -1,0 +1,23 @@
+name: add_selfhosted_repo
+
+inputs:
+  token:
+    description: "GitHub token"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: add_selfhosted_repo
+      run: |
+        apt update && apt install -y git gnupg2
+        pushd /
+        git config --global url."https://x-access-token:${{inputs.token}}@github.com/".insteadOf "https://github.com/"
+        git clone https://github.com/ForteFibre/fortefibre_apt_repository.git
+        gpg --dearmor -o /etc/apt/keyrings/fortefibre-key.gpg /fortefibre_apt_repository/public/public-key
+        echo "deb [signed-by=/etc/apt/keyrings/fortefibre-key.gpg] file:///fortefibre_apt_repository/public jammy main " > /etc/apt/sources.list.d/fortefibre.list
+        echo "yaml file:///fortefibre_apt_repository/public/rosdep/${ROS_DISTRO}_pkg.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list
+        apt update
+        rosdep update
+        popd
+      shell: bash
