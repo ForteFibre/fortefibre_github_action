@@ -41,5 +41,6 @@ for PKG_REL_PATH in $(colcon list -t -p); do
     ./debian/rules binary
     dpkg -i --force-depends --force-downgrade ../*.deb
     mv ../*.deb $EXPORT_DIR
+    rm -r .obj-* debian ../*.ddeb || true
     popd
 done
