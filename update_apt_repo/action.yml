@@ -1,19 +1,23 @@
-name : update_apt_repo
+name: Upload apt repository to S3 bucket
 
 inputs:
-  token:
-    description: 'GitHub token'
+  input-dir:
+    description: "Directory contains deb packages"
     required: true
+  s3-bucket:
+    description: "S3 bucket"
+    required: true
+  s3-access-key-id:
+    description: "S3 access key id"
+  s3-access-key-secret:
+    description: "S3 access key secret"
+  s3-endpoint:
+    description: "S3 endpoint"
+  gpg-private-key:
+    description: "GPG private key to sign release file"
+  gpg-fingerprint:
+    description: "GPG fingerprint"
 
 runs:
-  using: "composite"
-  steps:
-    - run: |
-        curl \
-          -X POST \
-          -H "Authorization: token ${{inputs.token}}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/ForteFibre/fortefibre_apt_repository/dispatches \
-          -d "{\"event_type\":\"update-debs\",\"client_payload\":{\"repository\":\"${GITHUB_REPOSITORY}\"}}"
-      shell: bash
-      
+  using: "docker"
+  image: docker://ghcr.io/fortefibre/deb-s3:latest
