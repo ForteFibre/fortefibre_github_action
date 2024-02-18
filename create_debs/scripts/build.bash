@@ -27,10 +27,15 @@ for PKG_REL_PATH in $(colcon list -t -p); do
     pushd $WORKSPACE_ROOT/$PKG_REL_PATH
     rm -r .obj-* debian || true
     bloom-generate rosdebian $WORKSPACE_ROOT/$PKG_REL_PATH
+    # Support concurrency
+    sed -i "s%dh_auto_build%dh_auto_build --parallel%" debian/rules
     # Fix for some NVIDIA libraries
     sed -i "s%dh_shlibdeps%dh_shlibdeps --dpkg-shlibdeps-params=--ignore-missing-info%" debian/rules
+    # :thinking: This is a workaround for a bug in the build system
+    # ref: https://wiki.debian.org/Python/Pybuild
+    sed -i "s%dh \$@ -v --buildsystem=pybuild%NO_PROXY="deno.land" dh \$@ -v --buildsystem=pybuild%" debian/rules
     # Because container is running as root, fakeroot is not needed
-    ./debian/rules binary -j
+    ./debian/rules binary
     dpkg -i --force-depends --force-downgrade ../*.deb
     mv ../*.deb /debs
     popd
