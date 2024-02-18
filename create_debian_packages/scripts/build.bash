@@ -12,9 +12,9 @@ EXPORT_DIR=${1:-/debs}
 mkdir -p $EXPORT_DIR
 
 # Add local repository to rosdep
-colcon list -t -n | awk '{ pkg = $1; gsub("_", "-", pkg); print $1 ":\n  ubuntu: [ros-humble-" pkg "]" }' > rosdep.yaml
-cat rosdep.yaml
-echo "yaml file:///$PWD/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list -a
+colcon list -t -n | awk '{ pkg = $1; gsub("_", "-", pkg); print $1 ":\n  ubuntu: [ros-humble-" pkg "]" }' > /tmp/rosdep.yaml
+cat /tmp/rosdep.yaml
+echo "yaml file:///tmp/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list -a
 
 # Expected `rosdep init` has been done in the base image
 apt-get update
