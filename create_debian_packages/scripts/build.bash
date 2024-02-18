@@ -12,7 +12,7 @@ EXPORT_DIR=${1:-/debs}
 mkdir -p $EXPORT_DIR
 
 # Add local repository to rosdep
-colcon list -t -n | awk '{ pkg = $1; gsub("_", "-", pkg); print $1 ":\n  ubuntu: [ros-humble-" pkg "]" }' > /tmp/rosdep.yaml
+colcon list -t -n --log-base /dev/null | awk '{ pkg = $1; gsub("_", "-", pkg); print $1 ":\n  ubuntu: [ros-humble-" pkg "]" }' > /tmp/rosdep.yaml
 cat /tmp/rosdep.yaml
 echo "yaml file:///tmp/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list -a
 
@@ -25,7 +25,7 @@ rosdep install -i --from-paths $WORKSPACE_ROOT/src -y
 
 export DEB_BUILD_OPTIONS="parallel=$(nproc) nocheck"
 
-for PKG_REL_PATH in $(colcon list -t -p); do
+for PKG_REL_PATH in $(colcon list -t -p --log-base /dev/null); do
     echo "Building $PKG_REL_PATH"
     pushd $WORKSPACE_ROOT/$PKG_REL_PATH
     rm -r .obj-* debian || true
