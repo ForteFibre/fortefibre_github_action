@@ -1,21 +1,21 @@
 name: Upload apt repository to S3 bucket
 
 inputs:
-  input-dir:
+  input_dir:
     description: "Directory contains deb packages"
     required: true
-  s3-bucket:
+  s3_bucket:
     description: "S3 bucket"
     required: true
-  s3-access-key-id:
+  s3_access_key_id:
     description: "S3 access key id"
-  s3-access-key-secret:
+  s3_access_key_secret:
     description: "S3 access key secret"
-  s3-endpoint:
+  s3_endpoint:
     description: "S3 endpoint"
-  gpg-private-key:
+  gpg_private_key:
     description: "GPG private key to sign release file"
-  gpg-fingerprint:
+  gpg_fingerprint:
     description: "GPG fingerprint"
 
 runs:
