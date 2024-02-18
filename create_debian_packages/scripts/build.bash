@@ -44,3 +44,5 @@ for PKG_REL_PATH in $(colcon --log-base /dev/null list -t -p); do
     rm -r .obj-* debian ../*.ddeb || true
     popd
 done
+
+chown -R $ORIG_UID:$ORIG_GID $EXPORT_DIR

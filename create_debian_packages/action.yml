@@ -19,6 +19,8 @@ runs:
       run: |
         mkdir ${{ github.workspace }}/debs
         docker run --rm -v ${{ github.workspace }}:/ws -v $PWD/${{ inputs.out-dir }}:/debs \
-           -v ${{ github.action_path }}/scripts:/scripts -w /ws \
-           ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} /scripts/build.bash
+          -v ${{ github.action_path }}/scripts:/scripts -w /ws \
+          -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
+          ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} \
+          /scripts/build.bash
       shell: bash
