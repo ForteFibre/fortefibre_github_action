@@ -25,6 +25,8 @@ rosdep install -i --from-paths $WORKSPACE_ROOT/src -y
 
 export DEB_BUILD_OPTIONS="parallel=$(nproc) nocheck"
 
+rm -r ../*.deb || true
+
 for PKG_REL_PATH in $(colcon --log-base /dev/null list -t -p); do
     echo "Building $PKG_REL_PATH"
     pushd $WORKSPACE_ROOT/$PKG_REL_PATH
