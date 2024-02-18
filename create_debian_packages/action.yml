@@ -1,0 +1,25 @@
+name: Create ROS debian packages
+
+inputs:
+  rosdistro:
+    description: "ROS distro"
+    default: "humble"
+    required: true
+  platform:
+    description: "Platform (amd64 or aarch64)"
+    default: "amd64"
+  out-dir:
+    description: "Packages output directory"
+    default: "./deb"
+
+runs:
+  using: composite
+  steps:
+    - name: Create debian packages in current workspace
+      container:
+        image: "ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }}"
+      run: |
+        ${{ github.action_path }}/scripts/build.bash ${{ inputs.out-dir }}
+      env:
+        ROS_DISTRO: ${{ inputs.rosdistro }}
+      shell: bash
