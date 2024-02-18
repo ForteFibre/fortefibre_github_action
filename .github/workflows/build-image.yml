@@ -1,9 +1,7 @@
 name: Build docker image for package building
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: {}
 
 env:
   IMAGE: ghcr.io/fortefibre/ros-buildroot
@@ -27,6 +25,8 @@ jobs:
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          cleanup: false
 
       - name: Build and push
         uses: docker/bake-action@v4
