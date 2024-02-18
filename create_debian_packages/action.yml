@@ -15,11 +15,10 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Create debian packages in current workspace
-      container:
-        image: "ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }}"
+    - name: Create debian packages
       run: |
-        ${{ github.action_path }}/scripts/build.bash ${{ inputs.out-dir }}
-      env:
-        ROS_DISTRO: ${{ inputs.rosdistro }}
+        mkdir ${{ github.workspace }}/debs
+        docker run --rm -v ${{ github.workspace }}:/ws -v $PWD/${{ inputs.out-dir }}:/debs \
+           -v ${{ github.action_path }}/scripts:/scripts -w /ws \
+           ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} /scripts/build.bash
       shell: bash
