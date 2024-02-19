@@ -16,15 +16,6 @@ while (( $# > 0 )); do
             ;;
         --rsync)
             RSYNC_TARGET=$2
-            RSYNC_TARGET_PARSE=(${RSYNC_TARGET//:/ })
-            RSYNC_TARGET_HOST=${RSYNC_TARGET_PARSE[0]}
-            RSYNC_TARGET_DIR=${RSYNC_TARGET_PARSE[1]%/}
-            if [ -z "$RSYNC_TARGET_HOST" ] || [ -z "$RSYNC_TARGET_DIR" ]; then
-                echo "Invalid rsync target: $RSYNC_TARGET"
-                exit 1
-            fi
-            TARGET_DIR=$RSYNC_TARGET_DIR
-            echo "Rsync target: $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/"
             shift 2
             ;;
         --rsync-opts)
@@ -47,6 +38,18 @@ while (( $# > 0 )); do
             ;;
     esac
 done
+
+if [ -n "$RSYNC_TARGET" ]; then
+    RSYNC_TARGET_HOST=$(echo $RSYNC_TARGET | cut -d: -f1)
+    RSYNC_TARGET_DIR=$(echo $RSYNC_TARGET | cut -d: -f2)
+    RSYNC_TARGET_DIR=${RSYNC_TARGET_DIR%/}
+    if [ -z "$RSYNC_TARGET_HOST" ] || [ -z "$RSYNC_TARGET_DIR" ]; then
+        echo "Invalid rsync target: $RSYNC_TARGET"
+        exit 1
+    fi
+    TARGET_DIR=$RSYNC_TARGET_DIR
+    echo "Rsync target: $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/"
+fi
 
 TARGET_DIR=${TARGET_DIR:-$PWD}
 BASE_OPTS="-v $PWD/src:$TARGET_DIR/src -v $PWD/xbuild:$TARGET_DIR/build \
@@ -79,10 +82,6 @@ if [ "$1" = 'installdeps' ]; then
     docker rm $(cat .xcolcon-cid)
     rm .xcolcon-cid
     docker rmi $CUSTOM_IMAGE_TEMP
-    exit
-elif [ "$1" = 'update' ]; then
-    docker rmi $CUSTOM_IMAGE || true
-    docker pull --platform $PLATFORM $BASE_IMAGE
     exit
 fi
 
