@@ -2,18 +2,57 @@
 
 set -eo pipefail
 
-if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
-    docker run --privileged --rm tonistiigi/binfmt --install all
-fi
+RSYNC_OPTS="-a --copy-links --progress"
+PLATFORM=linux/arm64
+BASE_IMAGE=ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64
+CUSTOM_IMAGE=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom
+
+# 引数解析
+while (( $# > 0 )); do
+    case "$1" in
+        -t|--target-dir)
+            TARGET_DIR=$2
+            shift 2
+            ;;
+        --rsync)
+            RSYNC_TARGET=$2
+            RSYNC_TARGET_PARSE=(${RSYNC_TARGET//:/ })
+            RSYNC_TARGET_HOST=${RSYNC_TARGET_PARSE[0]}
+            RSYNC_TARGET_DIR=${RSYNC_TARGET_PARSE[1]%/}
+            if [ -z "$RSYNC_TARGET_HOST" ] || [ -z "$RSYNC_TARGET_DIR" ]; then
+                echo "Invalid rsync target: $RSYNC_TARGET"
+                exit 1
+            fi
+            TARGET_DIR=$RSYNC_TARGET_DIR
+            echo "Rsync target: $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/"
+            shift 2
+            ;;
+        --rsync-opts)
+            RSYNC_OPTS=$2
+            shift 2
+            ;;
+        --precheck)
+            if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
+                docker run --privileged --rm tonistiigi/binfmt --install all
+            fi
+            exit
+            ;;
+        --update)
+            docker rmi $CUSTOM_IMAGE || true
+            docker pull --platform $PLATFORM $BASE_IMAGE
+            exit
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
 
 TARGET_DIR=${TARGET_DIR:-$PWD}
-BASE_IMAGE=ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64
-PLATFORM=linux/arm64
 BASE_OPTS="-v $PWD/src:$TARGET_DIR/src -v $PWD/xbuild:$TARGET_DIR/build \
     -v $PWD/xinstall:$TARGET_DIR/install -w $TARGET_DIR \
     -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
     -it --platform $PLATFORM"
-CUSTOM_IMAGE=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom
 
 # Pull base image if not present
 docker image inspect $BASE_IMAGE > /dev/null 2>&1 || docker pull --platform $PLATFORM $BASE_IMAGE
@@ -47,6 +86,10 @@ elif [ "$1" = 'update' ]; then
     exit
 fi
 
-echo "Using $IMAGE as base image. Target directory: $TARGET_DIR."
+echo "Using $IMAGE as base image / Target directory: $TARGET_DIR"
 
 docker run --rm $BASE_OPTS $IMAGE "$@"
+
+if [ -n "$RSYNC_TARGET" ]; then
+    rsync $RSYNC_OPTS $TARGET_DIR/xinstall/ $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/
+fi
