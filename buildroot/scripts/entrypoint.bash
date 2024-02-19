@@ -11,9 +11,10 @@ source /opt/ros/${ROS_DISTRO}/setup.bash
 
 # Create deb or colcon build
 if [ "$1" = 'deb' ]; then
-    bash /debiab.bash
+    bash /scripts/debian.bash
 elif [ "$1" = 'bash' ]; then
     bash
 else
     colcon "$@"
+    chown -R $ORIG_UID:$ORIG_GID /ws/install /ws/build /ws/log || true
 fi
