@@ -23,6 +23,15 @@ while (( $# > 0 )); do
             shift 2
             ;;
         --precheck)
+            which docker > /dev/null && RET=$? || RET=$?
+            if [ $RET -ne 0 ]; then
+                echo "Docker is not installed, installing..."
+                sudo apt-get install ca-certificates curl
+                curl -fsSL https://get.docker.com | sh
+                sudo usermod -aG docker $USER
+                echo "Docker installed, reboot your PC and re-run the script"
+                exit 1
+            fi
             if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
                 docker run --privileged --rm tonistiigi/binfmt --install all
             fi
@@ -65,15 +74,13 @@ BASE_OPTS="-v $PWD/src:$TARGET_DIR/src -v $PWD/xbuild:$TARGET_DIR/build \
 # Pull base image if not present
 docker image inspect $BASE_IMAGE > /dev/null 2>&1 || docker pull --platform $PLATFORM $BASE_IMAGE
 
-set +e
 # Determine image to use
-docker image inspect $CUSTOM_IMAGE > /dev/null 2>&1
-if [ $? -ne 0 ]; then
+docker image inspect $CUSTOM_IMAGE > /dev/null 2>&1 && RET=$? || RET=$?
+if [ $RET -ne 0 ]; then
     IMAGE=$BASE_IMAGE
 else
     IMAGE=$CUSTOM_IMAGE
 fi
-set -e
 
 if [ "$1" = 'installdeps' ]; then
     CUSTOM_IMAGE_TEMP=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom-temp
