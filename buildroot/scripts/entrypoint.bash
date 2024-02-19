@@ -16,5 +16,5 @@ elif [ "$1" = 'bash' ]; then
     bash
 else
     colcon "$@"
-    chown -R $ORIG_UID:$ORIG_GID /ws/install /ws/build /ws/log || true
+    chown -R $ORIG_UID:$ORIG_GID $PWD/install $PWD/build $PWD/log || true
 fi

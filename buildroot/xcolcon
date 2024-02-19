@@ -2,8 +2,13 @@
 
 set -e
 
-docker run --rm -v $PWD/src:/ws/src -v $PWD/xbuild:/ws/build \
-          -v $PWD/xinstall:/ws/install -w /ws \
-          -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
-          ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64 \
-          "$@"
+if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
+    docker run --privileged --rm tonistiigi/binfmt --install all
+fi
+
+docker run --rm -v $PWD/src:$PWD/src -v $PWD/xbuild:$PWD/build \
+    -v $PWD/xinstall:$PWD/install -w $PWD \
+    -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) -it \
+    --platform linux/arm64 \
+    ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64 \
+    "$@"
