@@ -90,5 +90,5 @@ echo "Using $IMAGE as base image / Target directory: $TARGET_DIR"
 docker run --rm $BASE_OPTS $IMAGE "$@"
 
 if [ -n "$RSYNC_TARGET" ]; then
-    rsync $RSYNC_OPTS $TARGET_DIR/xinstall/ $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/
+    rsync $RSYNC_OPTS $PWD/xinstall/ $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/
 fi
