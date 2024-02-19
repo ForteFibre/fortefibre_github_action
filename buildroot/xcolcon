@@ -51,6 +51,11 @@ if [ -n "$RSYNC_TARGET" ]; then
     echo "Rsync target: $RSYNC_TARGET_HOST:$RSYNC_TARGET_DIR/install/"
 fi
 
+if [ ! -d "$PWD/src" ]; then
+    echo "No source directory found in $PWD"
+    exit 1
+fi
+
 TARGET_DIR=${TARGET_DIR:-$PWD}
 BASE_OPTS="-v $PWD/src:$TARGET_DIR/src -v $PWD/xbuild:$TARGET_DIR/build \
     -v $PWD/xinstall:$TARGET_DIR/install -w $TARGET_DIR \
