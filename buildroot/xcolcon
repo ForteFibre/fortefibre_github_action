@@ -1,14 +1,46 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
 if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
     docker run --privileged --rm tonistiigi/binfmt --install all
 fi
 
-docker run --rm -v $PWD/src:$PWD/src -v $PWD/xbuild:$PWD/build \
+BASE_IMAGE=ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64
+BASE_OPTS="-v $PWD/src:$PWD/src -v $PWD/xbuild:$PWD/build \
     -v $PWD/xinstall:$PWD/install -w $PWD \
-    -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) -it \
-    --platform linux/arm64 \
-    ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64 \
-    "$@"
+    -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
+    -it --platform linux/arm64"
+CUSTOM_IMAGE=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom
+
+# Pull base image if not present
+docker image inspect $BASE_IMAGE > /dev/null 2>&1 || docker pull $BASE_IMAGE
+
+set +e
+# Determine image to use
+docker image inspect $CUSTOM_IMAGE > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+    IMAGE=$BASE_IMAGE
+else
+    IMAGE=$CUSTOM_IMAGE
+fi
+set -e
+
+if [ "$1" = 'installdeps' ]; then
+    CUSTOM_IMAGE_TEMP=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom-temp
+    # Stash the current image
+    docker tag $IMAGE $CUSTOM_IMAGE_TEMP
+    docker run --cidfile .xcolcon-cid $BASE_OPTS --entrypoint /bin/bash $IMAGE -c "apt-get update && rosdep update && rosdep install -i --from-paths . -y"
+    docker commit \
+        --change 'ENTRYPOINT [ "/scripts/entrypoint.bash" ]' \
+        --change 'CMD []' \
+        $(cat .xcolcon-cid) $CUSTOM_IMAGE
+    docker rm $(cat .xcolcon-cid)
+    rm .xcolcon-cid
+    docker rmi $CUSTOM_IMAGE_TEMP
+    exit
+fi
+
+echo "Using $IMAGE as base image."
+
+docker run --rm $BASE_OPTS $IMAGE "$@"
