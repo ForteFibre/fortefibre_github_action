@@ -7,14 +7,15 @@ if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
 fi
 
 BASE_IMAGE=ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64
+PLATFORM=linux/arm64
 BASE_OPTS="-v $PWD/src:$PWD/src -v $PWD/xbuild:$PWD/build \
     -v $PWD/xinstall:$PWD/install -w $PWD \
     -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
-    -it --platform linux/arm64"
+    -it --platform $PLATFORM"
 CUSTOM_IMAGE=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom
 
 # Pull base image if not present
-docker image inspect $BASE_IMAGE > /dev/null 2>&1 || docker pull $BASE_IMAGE
+docker image inspect $BASE_IMAGE > /dev/null 2>&1 || docker pull --platform $PLATFORM $BASE_IMAGE
 
 set +e
 # Determine image to use
@@ -41,7 +42,7 @@ if [ "$1" = 'installdeps' ]; then
     exit
 elif [ "$1" = 'update' ]; then
     docker rmi $CUSTOM_IMAGE || true
-    docker pull $BASE_IMAGE
+    docker pull --platform $PLATFORM $BASE_IMAGE
     exit
 fi
 
