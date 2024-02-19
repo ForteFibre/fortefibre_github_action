@@ -6,10 +6,11 @@ if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
     docker run --privileged --rm tonistiigi/binfmt --install all
 fi
 
+TARGET_DIR=${TARGET_DIR:-$PWD}
 BASE_IMAGE=ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64
 PLATFORM=linux/arm64
-BASE_OPTS="-v $PWD/src:$PWD/src -v $PWD/xbuild:$PWD/build \
-    -v $PWD/xinstall:$PWD/install -w $PWD \
+BASE_OPTS="-v $PWD/src:$TARGET_DIR/src -v $PWD/xbuild:$TARGET_DIR/build \
+    -v $PWD/xinstall:$TARGET_DIR/install -w $TARGET_DIR \
     -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
     -it --platform $PLATFORM"
 CUSTOM_IMAGE=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom
@@ -46,6 +47,6 @@ elif [ "$1" = 'update' ]; then
     exit
 fi
 
-echo "Using $IMAGE as base image."
+echo "Using $IMAGE as base image. Target directory: $TARGET_DIR."
 
 docker run --rm $BASE_OPTS $IMAGE "$@"
