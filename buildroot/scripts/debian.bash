@@ -7,7 +7,7 @@ set -e
 source /opt/ros/${ROS_DISTRO}/setup.bash 
 
 WORKSPACE_ROOT=$PWD
-EXPORT_DIR=${1:-/debs}
+EXPORT_DIR=${INPUT_OUT_DIR:-./debs}
 
 mkdir -p $EXPORT_DIR
 
@@ -47,4 +47,4 @@ for PKG_REL_PATH in $(colcon --log-base /dev/null list -t -p); do
     popd
 done
 
-chown -R $ORIG_UID:$ORIG_GID $EXPORT_DIR
+chmod -R a+w $EXPORT_DIR

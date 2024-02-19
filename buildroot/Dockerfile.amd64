@@ -21,4 +21,9 @@ RUN --mount=type=cache,target=/var/lib/apt,sharing=private \
     && rosdep install --from-paths /tmp/ws --ignore-src --rosdistro ${ROS_DISTRO} -y \
     && rm /etc/ros/rosdep/sources.list.d/61-customized-rosdep.list
 
-ENTRYPOINT [ "/bin/bash" ]
+ENV ROS_DISTRO=${ROS_DISTRO}
+
+COPY scripts/ /scripts/
+RUN chmod +x /scripts/entrypoint.bash
+
+ENTRYPOINT [ "/scripts/entrypoint.bash" ]

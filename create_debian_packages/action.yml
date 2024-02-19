@@ -8,19 +8,10 @@ inputs:
   platform:
     description: "Platform (amd64 or aarch64)"
     default: "amd64"
-  out-dir:
+  out_dir:
     description: "Packages output directory"
     default: "./deb"
 
 runs:
-  using: composite
-  steps:
-    - name: Create debian packages
-      run: |
-        mkdir ${{ github.workspace }}/debs
-        docker run --rm -v ${{ github.workspace }}:/ws -v $PWD/${{ inputs.out-dir }}:/debs \
-          -v ${{ github.action_path }}/scripts:/scripts -w /ws \
-          -e ORIG_UID=$(id -u) -e ORIG_GID=$(id -g) \
-          ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} \
-          /scripts/build.bash
-      shell: bash
+  using: docker
+  image: ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }}
