@@ -39,6 +39,10 @@ if [ "$1" = 'installdeps' ]; then
     rm .xcolcon-cid
     docker rmi $CUSTOM_IMAGE_TEMP
     exit
+elif [ "$1" = 'update' ]; then
+    docker rmi $CUSTOM_IMAGE || true
+    docker pull $BASE_IMAGE
+    exit
 fi
 
 echo "Using $IMAGE as base image."
