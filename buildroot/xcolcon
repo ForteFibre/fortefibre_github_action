@@ -42,9 +42,6 @@ while (( $# > 0 )); do
                 echo "Rsync is not installed, installing..."
                 sudo apt-get install rsync
             fi
-            if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
-                docker run --privileged --rm tonistiigi/binfmt --install all
-            fi
             exit
             ;;
         --update)
@@ -73,6 +70,10 @@ fi
 if [ ! -d "$PWD/src" ]; then
     echo "No source directory found in $PWD"
     exit 1
+fi
+
+if [ ! -f /proc/sys/fs/binfmt_misc/qemu-aarch64 ]; then
+    docker run --privileged --rm tonistiigi/binfmt --install all
 fi
 
 TARGET_DIR=${TARGET_DIR:-$PWD}
