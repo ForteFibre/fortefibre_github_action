@@ -15,6 +15,7 @@ if [ "$1" = 'deb' ]; then
 elif [ "$1" = 'bash' ]; then
     bash
 else
-    colcon "$@"
+    colcon "$@" && RET=$? || RET=$?
     chown -R $ORIG_UID:$ORIG_GID $PWD/install $PWD/build $PWD/log || true
+    exit $RET
 fi
