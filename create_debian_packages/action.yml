@@ -11,9 +11,11 @@ inputs:
   out_dir:
     description: "Packages output directory"
     default: "./deb"
-
 runs:
-  using: docker
-  image: ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }}
-  args:
-    - deb
+  using: composite
+  steps:
+    - name: build
+      run: |
+        docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUR_DIR="${{ inputs.out_dir }}" \
+          ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} deb
+      shell: bash
