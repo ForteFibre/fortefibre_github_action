@@ -9,7 +9,7 @@ fi
 
 RSYNC_OPTS="-a --copy-links --progress"
 PLATFORM=linux/arm64
-BASE_IMAGE=ghcr.io/fortefibre/buildroot:$ROS_DISTRO-aarch64
+BASE_IMAGE=ghcr.io/fortefibre/buildroot-small:$ROS_DISTRO-aarch64
 CUSTOM_IMAGE=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom
 
 # 引数解析
@@ -93,11 +93,15 @@ else
     IMAGE=$CUSTOM_IMAGE
 fi
 
-if [ "$1" = 'installdeps' ]; then
+customize_image() {
+    if [ -f .xcolcon-cid ]; then
+        docker rm $(cat .xcolcon-cid) || true
+        rm .xcolcon-cid
+    fi
     CUSTOM_IMAGE_TEMP=fortefibre/buildroot:$ROS_DISTRO-aarch64-custom-temp
     # Stash the current image
     docker tag $IMAGE $CUSTOM_IMAGE_TEMP
-    docker run --cidfile .xcolcon-cid $BASE_OPTS --entrypoint /bin/bash $IMAGE -c "apt-get update && rosdep update && rosdep install -i --from-paths . -y"
+    docker run --cidfile .xcolcon-cid $BASE_OPTS --entrypoint /bin/bash -it $IMAGE -c "$1"
     docker commit \
         --change 'ENTRYPOINT [ "/scripts/entrypoint.bash" ]' \
         --change 'CMD []' \
@@ -105,6 +109,24 @@ if [ "$1" = 'installdeps' ]; then
     docker rm $(cat .xcolcon-cid)
     rm .xcolcon-cid
     docker rmi $CUSTOM_IMAGE_TEMP
+}
+
+if [ "$1" = 'installdeps' ]; then
+    customize_image "apt-get update && rosdep update && rosdep install -i --from-paths . -y"
+    exit
+fi
+
+if [ "$1" = 'custom' ]; then
+    customize_image /bin/bash
+    exit
+fi
+
+if [ "$1" = 'addrosdep' ]; then
+    if [ -z "$2" ]; then
+        echo "Usage: $0 addrosdep <rosdep list line>"
+        exit 1
+    fi
+    customize_image "echo $2 | tee -a /etc/ros/rosdep/sources.list.d/70-customized-rosdep.list"
     exit
 fi
 
