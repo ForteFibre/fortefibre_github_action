@@ -11,6 +11,8 @@ EXPORT_DIR=${INPUT_OUT_DIR:-./debs}
 
 mkdir -p $EXPORT_DIR
 
+EXPORT_DIR=$(cd $EXPORT_DIR && pwd)/
+
 # Add local repository to rosdep
 colcon --log-base /dev/null list -t -n | awk '{ pkg = $1; gsub("_", "-", pkg); print $1 ":\n  ubuntu: [ros-humble-" pkg "]" }' > /tmp/rosdep.yaml
 cat /tmp/rosdep.yaml
