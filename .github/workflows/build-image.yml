@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [amd64, amd64_small, aarch64, aarch64_small]
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +30,7 @@ jobs:
         with:
           push: true
           workdir: buildroot
+          targets: ${{ matrix.target }}
           set: |
             *.cache-to=type=gha
             *.cache-from=type=gha
