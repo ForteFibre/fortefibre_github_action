@@ -21,7 +21,7 @@ apt-get update
 rosdep update
 
 # Ensure that all dependencies are installed
-rosdep install -i --from-paths $WORKSPACE_ROOT/src -y
+rosdep install -i --from-paths $WORKSPACE_ROOT -y
 
 export DEB_BUILD_OPTIONS="parallel=$(nproc) nocheck"
 
