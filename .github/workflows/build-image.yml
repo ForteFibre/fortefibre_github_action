@@ -32,5 +32,5 @@ jobs:
           workdir: buildroot
           targets: ${{ matrix.target }}
           set: |
-            *.cache-to=type=gha
-            *.cache-from=type=gha
+            *.cache-to=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache,mode=max
+            *.cache-from=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache
