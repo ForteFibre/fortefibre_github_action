@@ -11,6 +11,9 @@ source /opt/ros/${ROS_DISTRO}/setup.bash
 
 # Create deb or colcon build
 if [ "$1" = 'deb' ]; then
+    if [ -n "$INPUT_PRE_SCRIPT" ]; then
+        bash -c "$INPUT_PRE_SCRIPT"
+    fi
     bash /scripts/debian.bash
 elif [ "$1" = 'bash' ]; then
     bash

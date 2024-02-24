@@ -11,11 +11,15 @@ inputs:
   out_dir:
     description: "Packages output directory"
     default: "./deb"
+  pre_script:
+    description: "Bash script to execute before build"
+    default: "echo OK"
 runs:
   using: composite
   steps:
     - name: build
       run: |
         docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUR_DIR="${{ inputs.out_dir }}" \
+          -e INPUT_PRE_SCRIPT="${{ inputs.pre_script }}" \
           ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} deb
       shell: bash
