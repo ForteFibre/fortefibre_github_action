@@ -2,6 +2,11 @@ name: Build docker image for package building
 
 on:
   workflow_dispatch: {}
+  push:
+    branches:
+      - main
+    paths:
+      - "buildroot/**"
 
 jobs:
   build:
@@ -34,3 +39,13 @@ jobs:
           set: |
             *.cache-to=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache,mode=max
             *.cache-from=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache
+
+  pull:
+    runs-on: GPU
+    needs: build
+    steps:
+      - name: Pull latest images
+        run: |
+          docker pull ghcr.io/fortefibre/buildroot:humble-amd64
+          docker pull --platform linux/arm64/v8 ghcr.io/fortefibre/buildroot:humble-aarch64
+          docker system prune -f
