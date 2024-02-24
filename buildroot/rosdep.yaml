@@ -1,2 +1,5 @@
 libthrust-dev:
   ubuntu: [libthrust-dev]
+
+odrive:
+  pip: [odrive]
