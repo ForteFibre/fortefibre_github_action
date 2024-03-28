@@ -20,7 +20,7 @@ echo "yaml file:///tmp/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50
 
 if [ -d /mimic-cross ]; then
     cp -r /etc/apt/auth.conf.d/. /mimic-cross/etc/apt/auth.conf.d/ || true
-    cp -r /etc/apt/keyrings.d/. /mimic-cross/etc/apt/keyrings.d/ || true
+    cp -r /etc/apt/keyrings/. /mimic-cross/etc/apt/keyrings/ || true
 fi
 
 # Expected `rosdep init` has been done in the base image
