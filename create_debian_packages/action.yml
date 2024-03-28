@@ -19,9 +19,9 @@ runs:
   steps:
     - name: build
       run: |
-        docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUR_DIR="${{ inputs.out_dir }}" \
-          -e INPUT_PRE_SCRIPT=$INPUT_PRE_SCRIPT \
+        docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUR_DIR -e INPUT_PRE_SCRIPT \
           ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} deb
       env:
         INPUT_PRE_SCRIPT: ${{ inputs.pre_script }}
+        INPUT_OUR_DIR: ${{ inputs.out_dir }}
       shell: bash
