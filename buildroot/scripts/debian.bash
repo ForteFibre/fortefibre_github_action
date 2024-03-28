@@ -18,6 +18,13 @@ colcon --log-base /dev/null list -t -n | awk '{ pkg = $1; gsub("_", "-", pkg); p
 cat /tmp/rosdep.yaml
 echo "yaml file:///tmp/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list -a
 
+if [ -d /mimic-cross && -d /etc/apt/auth.conf.d/ ]; then
+    cp -r /etc/apt/auth.conf.d/. /mimic-cross/etc/apt/auth.conf.d/ || true
+fi
+if [ -d /mimic-cross && -d /etc/apt/keyrings.d/ ]; then
+    cp -r /etc/apt/keyrings.d/. /mimic-cross/etc/apt/keyrings.d/ || true
+fi
+
 # Expected `rosdep init` has been done in the base image
 apt-get update
 rosdep update
