@@ -17,6 +17,8 @@ inputs:
     description: "GPG private key to sign release file"
   gpg_fingerprint:
     description: "GPG fingerprint"
+  codename:
+    description: Ubuntu codename
 
 runs:
   using: "docker"

@@ -8,6 +8,9 @@ target "amd64" {
     dockerfile = "Dockerfile.amd64"
     platforms = ["linux/amd64"]
     tags = ["ghcr.io/fortefibre/buildroot:humble-amd64"]
+    args = {
+        BASE_IMAGE = "docker.io/hakuturu583/cuda_ros:humble-cuda-12.2.0-devel"
+    }
 }
 
 target "aarch64" {
@@ -15,6 +18,9 @@ target "aarch64" {
     dockerfile = "Dockerfile.arm64"
     platforms = ["linux/arm64"]
     tags = ["ghcr.io/fortefibre/buildroot:humble-aarch64"]
+    args = {
+        BASE_IMAGE = "docker.io/hakuturu583/cuda_ros:lt4-humble-cuda-12.2.2-devel"
+    }
 }
 
 target "amd64_small" {

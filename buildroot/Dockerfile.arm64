@@ -1,7 +1,8 @@
 ARG ROS_DISTRO=humble
+ARG BASE_IMAGE
 
-FROM --platform=${BUILDPLATFORM} impactaky/mc-ubuntu22.04-${TARGETARCH}-host:2.0.1 AS mimic-host
-FROM docker.io/hakuturu583/cuda_ros:lt4-humble-cuda-12.2.2-devel as build_stage
+FROM --platform=${BUILDPLATFORM} impactaky/mc-ubuntu22.04-${TARGETARCH}-host:2.3.0 AS mimic-host
+FROM $BASE_IMAGE as build_stage
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DENO_NO_UPDATE_CHECK=1
