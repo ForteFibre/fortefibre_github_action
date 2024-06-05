@@ -1,5 +1,6 @@
 group "default" {
-  targets = ["amd64", "aarch64", "amd64_small", "aarch64_small"]
+  targets = ["amd64", "aarch64", "amd64_small_humble", "aarch64_small_humble",
+    "amd64_small_jazzy", "aarch64_small_jazzy"]
 }
 
 
@@ -23,16 +24,42 @@ target "aarch64" {
     }
 }
 
-target "amd64_small" {
+target "amd64_small_humble" {
     target = "build_stage"
     dockerfile = "Dockerfile.small.amd64"
     platforms = ["linux/amd64"]
     tags = ["ghcr.io/fortefibre/buildroot-small:humble-amd64"]
+    args = {
+        ROS_DISTRO = "humble"
+    }
 }
 
-target "aarch64_small" {
+target "aarch64_small_humble" {
     target = "build_stage"
     dockerfile = "Dockerfile.small.arm64"
     platforms = ["linux/arm64"]
     tags = ["ghcr.io/fortefibre/buildroot-small:humble-aarch64"]
+    args = {
+        ROS_DISTRO = "humble"
+    }
+}
+
+target "amd64_small_jazzy" {
+    target = "build_stage"
+    dockerfile = "Dockerfile.small.amd64"
+    platforms = ["linux/amd64"]
+    tags = ["ghcr.io/fortefibre/buildroot-small:jazzy-amd64"]
+    args = {
+        ROS_DISTRO = "jazzy"
+    }
+}
+
+target "aarch64_small_jazzy" {
+    target = "build_stage"
+    dockerfile = "Dockerfile.small.arm64"
+    platforms = ["linux/arm64"]
+    tags = ["ghcr.io/fortefibre/buildroot-small:jazzy-aarch64"]
+    args = {
+        ROS_DISTRO = "jazzy"
+    }
 }

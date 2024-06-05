@@ -13,13 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target: [amd64, amd64_small, aarch64, aarch64_small]
-        rosdistro: [humble, jazzy]
-        exclude:
-          - target: amd64
-            rosdistro: jazzy
-          - target: aarch64
-            rosdistro: jazzy
+        target:
+          [
+            "amd64",
+            "aarch64",
+            "amd64_small_humble",
+            "aarch64_small_humble",
+            "amd64_small_jazzy",
+            "aarch64_small_jazzy",
+          ]
     steps:
       - uses: actions/checkout@v4
 
@@ -45,7 +47,6 @@ jobs:
           set: |
             *.cache-to=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache,mode=max
             *.cache-from=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache
-            *.args.ROS_DISTRO=${{ matrix.rosdistro }}
 
   pull:
     runs-on: GPU
