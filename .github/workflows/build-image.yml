@@ -19,8 +19,7 @@ jobs:
             "aarch64",
             "amd64_small_humble",
             "aarch64_small_humble",
-            "amd64_small_jazzy",
-            "aarch64_small_jazzy",
+            "amd64_small_jazzy"
           ]
     steps:
       - uses: actions/checkout@v4
