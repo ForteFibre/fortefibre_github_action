@@ -42,7 +42,7 @@ target "humble_small" {
         "ghcr.io/fortefibre/buildroot:humble-small"
     ]
     args = {
-        BASE_IMAGE = "docker.io/library/ros:humble-ros-perception"
+        BASE_IMAGE = "docker.io/library/ros:humble-perception"
         PACKAGE_XML = "package.small.xml"
     }
 }
@@ -55,7 +55,7 @@ target "humble_small_cross" {
         "ghcr.io/fortefibre/buildroot:humble-small-cross"
     ]
     args = {
-        BASE_IMAGE = "docker.io/library/ros:humble-ros-perception"
+        BASE_IMAGE = "docker.io/library/ros:humble-perception"
         PACKAGE_XML = "package.small.xml"
     }
 }
@@ -66,7 +66,7 @@ target "jazzy_small" {
     platforms = ["linux/amd64", "linux/arm64"]
     tags = ["ghcr.io/fortefibre/buildroot:jazzy-small"]
     args = {
-        BASE_IMAGE = "docker.io/library/ros:jazzy-ros-perception"
+        BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
         PACKAGE_XML = "package.small.xml"
     }
 }
@@ -77,7 +77,7 @@ target "jazzy_small_cross" {
     platforms = ["linux/arm64"]
     tags = ["ghcr.io/fortefibre/buildroot:jazzy-small-aarch64-cross"]
     args = {
-        BASE_IMAGE = "docker.io/library/ros:jazzy-ros-perception"
+        BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
         PACKAGE_XML = "package.small.xml"
     }
 }
