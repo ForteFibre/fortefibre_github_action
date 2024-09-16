@@ -15,11 +15,11 @@ jobs:
       matrix:
         target:
           [
-            "amd64",
-            "aarch64",
-            "amd64_small_humble",
-            "aarch64_small_humble",
-            "amd64_small_jazzy"
+            "humble_large",
+            "humble_large_cross",
+            "humble_small",
+            "humble_small_cross",
+            "jazzy_small",
           ]
     steps:
       - uses: actions/checkout@v4
@@ -53,6 +53,7 @@ jobs:
     steps:
       - name: Pull latest images
         run: |
-          docker pull ghcr.io/fortefibre/buildroot:humble-amd64
-          docker pull --platform linux/arm64/v8 ghcr.io/fortefibre/buildroot:humble-aarch64
+          docker pull ghcr.io/fortefibre/buildroot:humble-large
+          docker pull ghcr.io/fortefibre/buildroot:jazzy-small
+          docker pull --platform linux/arm64/v8 ghcr.io/fortefibre/buildroot:humble-large-cross
           docker system prune -f

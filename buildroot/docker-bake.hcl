@@ -1,65 +1,83 @@
 group "default" {
-  targets = ["amd64", "aarch64", "amd64_small_humble", "aarch64_small_humble",
-    "amd64_small_jazzy", "aarch64_small_jazzy"]
+    targets = [
+        "humble_large",
+        "humble_large_cross",
+        "humble_small",
+        "humble_small_cross",
+        "jazzy_small"
+    ]
 }
 
-
-target "amd64" {
+target "humble_large" {
     target = "build_stage"
-    dockerfile = "Dockerfile.amd64"
-    platforms = ["linux/amd64"]
-    tags = ["ghcr.io/fortefibre/buildroot:humble-amd64"]
+    dockerfile = "Dockerfile.native"
+    platforms = ["linux/amd64", "linux/arm64"]
+    tags = [
+        "ghcr.io/fortefibre/buildroot:humble-large"
+    ]
     args = {
         BASE_IMAGE = "docker.io/hakuturu583/cuda_ros:humble-cuda-12.2.0-devel"
+        PACKAGE_XML = "package.xml"
     }
 }
 
-target "aarch64" {
+target "humble_large_cross" {
     target = "build_stage"
-    dockerfile = "Dockerfile.arm64"
+    dockerfile = "Dockerfile.cross"
     platforms = ["linux/arm64"]
-    tags = ["ghcr.io/fortefibre/buildroot:humble-aarch64"]
+    tags = [
+        "ghcr.io/fortefibre/buildroot:humble-large-cross"
+    ]
     args = {
         BASE_IMAGE = "docker.io/hakuturu583/cuda_ros:lt4-humble-cuda-12.2.2-devel"
+        PACKAGE_XML = "package.xml"
     }
 }
 
-target "amd64_small_humble" {
+target "humble_small" {
     target = "build_stage"
-    dockerfile = "Dockerfile.small.amd64"
-    platforms = ["linux/amd64"]
-    tags = ["ghcr.io/fortefibre/buildroot-small:humble-amd64"]
+    dockerfile = "Dockerfile.native"
+    platforms = ["linux/amd64", "linux/arm64"]
+    tags = [
+        "ghcr.io/fortefibre/buildroot:humble-small"
+    ]
     args = {
-        ROS_DISTRO = "humble"
+        BASE_IMAGE = "docker.io/library/ros:humble-ros-perception"
+        PACKAGE_XML = "package.small.xml"
     }
 }
 
-target "aarch64_small_humble" {
+target "humble_small_cross" {
     target = "build_stage"
-    dockerfile = "Dockerfile.small.arm64"
+    dockerfile = "Dockerfile.cross"
     platforms = ["linux/arm64"]
-    tags = ["ghcr.io/fortefibre/buildroot-small:humble-aarch64"]
+    tags = [
+        "ghcr.io/fortefibre/buildroot:humble-small-cross"
+    ]
     args = {
-        ROS_DISTRO = "humble"
+        BASE_IMAGE = "docker.io/library/ros:humble-ros-perception"
+        PACKAGE_XML = "package.small.xml"
     }
 }
 
-target "amd64_small_jazzy" {
+target "jazzy_small" {
     target = "build_stage"
-    dockerfile = "Dockerfile.small.amd64"
-    platforms = ["linux/amd64"]
-    tags = ["ghcr.io/fortefibre/buildroot-small:jazzy-amd64"]
+    dockerfile = "Dockerfile.native"
+    platforms = ["linux/amd64", "linux/arm64"]
+    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small"]
     args = {
-        ROS_DISTRO = "jazzy"
+        BASE_IMAGE = "docker.io/library/ros:jazzy-ros-perception"
+        PACKAGE_XML = "package.small.xml"
     }
 }
 
-target "aarch64_small_jazzy" {
+target "jazzy_small_cross" {
     target = "build_stage"
-    dockerfile = "Dockerfile.small.arm64"
+    dockerfile = "Dockerfile.cross"
     platforms = ["linux/arm64"]
-    tags = ["ghcr.io/fortefibre/buildroot-small:jazzy-aarch64"]
+    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small-aarch64-cross"]
     args = {
-        ROS_DISTRO = "jazzy"
+        BASE_IMAGE = "docker.io/library/ros:jazzy-ros-perception"
+        PACKAGE_XML = "package.small.xml"
     }
 }
