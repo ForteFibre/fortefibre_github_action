@@ -19,6 +19,7 @@ inputs:
     description: "GPG fingerprint"
   codename:
     description: Ubuntu codename
+    default: "jammy"
 
 runs:
   using: "docker"
