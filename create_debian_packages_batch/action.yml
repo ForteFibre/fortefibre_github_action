@@ -1,0 +1,37 @@
+name: Create ROS debian packages for all supported variant
+description: Create ROS debian packages using Docker image
+
+inputs:
+  output_dir:
+    description: "Packages output directory"
+    default: "./deb"
+  pre_script:
+    description: "Bash script to execute before build"
+    default: "echo OK"
+runs:
+  using: composite
+  steps:
+    - name: "humble"
+      uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
+      with:
+        output_dir: ${{ inputs.output_dir }}
+        pre_script: ${{ inputs.pre_script }}
+        rosdistro: humble
+        platform: linux/amd64
+        variant: large
+    - name: "humble cross"
+      uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
+      with:
+        output_dir: ${{ inputs.output_dir }}
+        pre_script: ${{ inputs.pre_script }}
+        rosdistro: humble
+        platform: linux/arm64
+        variant: large-cross
+    - name: "jazzy"
+      uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
+      with:
+        output_dir: ${{ inputs.output_dir }}
+        pre_script: ${{ inputs.pre_script }}
+        rosdistro: jazzy
+        platform: linux/amd64
+        variant: small

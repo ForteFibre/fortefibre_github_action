@@ -1,14 +1,18 @@
 name: Create ROS debian packages
+description: Create ROS debian packages using Docker image
 
 inputs:
   rosdistro:
     description: "ROS distro"
     default: "humble"
     required: true
+  variant:
+    description: Docker image variant. (small / small-cross / large / large-cross)
+    default: "small"
   platform:
-    description: "Platform (amd64 or aarch64)"
-    default: "amd64"
-  out_dir:
+    description: "Platform (linux/amd64 or linux/arm64)"
+    default: "linux/amd64"
+  output_dir:
     description: "Packages output directory"
     default: "./deb"
   pre_script:
@@ -19,9 +23,10 @@ runs:
   steps:
     - name: build
       run: |
-        docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUR_DIR -e INPUT_PRE_SCRIPT \
-          ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.platform }} deb
+        docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUTPUT_DIR -e INPUT_PRE_SCRIPT \
+          --platform ${{ inputs.platform }} \
+          ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.variant }} deb
       env:
         INPUT_PRE_SCRIPT: ${{ inputs.pre_script }}
-        INPUT_OUR_DIR: ${{ inputs.out_dir }}
+        INPUT_OUTPUT_DIR: ${{ inputs.output_dir }}
       shell: bash
