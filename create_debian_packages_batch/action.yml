@@ -4,7 +4,7 @@ description: Create ROS debian packages using Docker image
 inputs:
   output_dir:
     description: "Packages output directory"
-    default: "/tmp/deb"
+    default: "./debian-packages"
   pre_script:
     description: "Bash script to execute before build"
     default: "echo OK"
@@ -56,7 +56,7 @@ runs:
     - name: Update APT repository (jammy)
       uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
       with:
-        input_dir: "./debs/jammy"
+        input_dir: ${{ inputs.output_dir }}/jammy
         s3_bucket: ${{ inputs.s3_bucket }}
         s3_access_key_id: ${{ inputs.s3_access_key_id }}
         s3_access_key_secret: ${{ inputs.s3_access_key_secret }}
@@ -68,7 +68,7 @@ runs:
     - name: Update APT repository (noble)
       uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
       with:
-        input_dir: "./debs/noble"
+        input_dir: ${{ inputs.output_dir }}/noble
         s3_bucket: ${{ inputs.s3_bucket }}
         s3_access_key_id: ${{ inputs.s3_access_key_id }}
         s3_access_key_secret: ${{ inputs.s3_access_key_secret }}
