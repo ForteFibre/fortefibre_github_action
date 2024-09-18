@@ -75,7 +75,7 @@ target "jazzy_small_cross" {
     target = "build_stage"
     dockerfile = "Dockerfile.cross"
     platforms = ["linux/arm64"]
-    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small-aarch64-cross"]
+    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small-cross"]
     args = {
         BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
         PACKAGE_XML = "package.small.xml"
