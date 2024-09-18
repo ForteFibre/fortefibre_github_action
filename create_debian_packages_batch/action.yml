@@ -4,34 +4,75 @@ description: Create ROS debian packages using Docker image
 inputs:
   output_dir:
     description: "Packages output directory"
-    default: "./deb"
+    default: "/tmp/deb"
   pre_script:
     description: "Bash script to execute before build"
     default: "echo OK"
+  s3_bucket:
+    description: "S3 bucket"
+    required: true
+  s3_access_key_id:
+    description: "S3 access key id"
+  s3_access_key_secret:
+    description: "S3 access key secret"
+  s3_endpoint:
+    description: "S3 endpoint"
+  gpg_private_key:
+    description: "GPG private key to sign release file"
+    required: true
+  gpg_fingerprint:
+    description: "GPG fingerprint"
+    required: true
 runs:
   using: composite
   steps:
     - name: "humble"
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
       with:
-        output_dir: ${{ inputs.output_dir }}
+        output_dir: ${{ inputs.output_dir }}/jammy
         pre_script: ${{ inputs.pre_script }}
         rosdistro: humble
         platform: linux/amd64
         variant: large
+
     - name: "humble cross"
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
       with:
-        output_dir: ${{ inputs.output_dir }}
+        output_dir: ${{ inputs.output_dir }}/jammy
         pre_script: ${{ inputs.pre_script }}
         rosdistro: humble
         platform: linux/arm64
         variant: large-cross
+
     - name: "jazzy"
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
       with:
-        output_dir: ${{ inputs.output_dir }}
+        output_dir: ${{ inputs.output_dir }}/noble
         pre_script: ${{ inputs.pre_script }}
         rosdistro: jazzy
         platform: linux/amd64
         variant: small
+
+    - name: Update APT repository (jammy)
+      uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
+      with:
+        input_dir: "./debs/jammy"
+        s3_bucket: ${{ inputs.s3_bucket }}
+        s3_access_key_id: ${{ inputs.s3_access_key_id }}
+        s3_access_key_secret: ${{ inputs.s3_access_key_secret }}
+        s3_endpoint: ${{ inputs.s3_endpoint }}
+        gpg_private_key: ${{ inputs.gpg_private_key }}
+        gpg_fingerprint: ${{ inputs.gpg_fingerprint }}
+        codename: jammy
+
+    - name: Update APT repository (noble)
+      uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
+      with:
+        input_dir: "./debs/noble"
+        s3_bucket: ${{ inputs.s3_bucket }}
+        s3_access_key_id: ${{ inputs.s3_access_key_id }}
+        s3_access_key_secret: ${{ inputs.s3_access_key_secret }}
+        s3_endpoint: ${{ inputs.s3_endpoint }}
+        gpg_private_key: ${{ inputs.gpg_private_key }}
+        gpg_fingerprint: ${{ inputs.gpg_fingerprint }}
+        codename: noble
