@@ -4,7 +4,7 @@ set -e
 
 # TODO: Add apt repository for other packages
 
-source /opt/ros/${ROS_DISTRO}/setup.bash 
+source /opt/ros/${ROS_DISTRO}/setup.bash
 
 WORKSPACE_ROOT=$PWD
 EXPORT_DIR=${INPUT_OUT_DIR:-./debs}
@@ -14,7 +14,7 @@ mkdir -p $EXPORT_DIR
 EXPORT_DIR=$(cd $EXPORT_DIR && pwd)/
 
 # Add local repository to rosdep
-colcon --log-base /dev/null list -t -n | awk '{ pkg = $1; gsub("_", "-", pkg); print $1 ":\n  ubuntu: [ros-humble-" pkg "]" }' > /tmp/rosdep.yaml
+colcon --log-base /dev/null list -t -n | awk "{ pkg = \$1; gsub(\"_\", \"-\", pkg); print \$1 \":\\n  ubuntu: [ros-${ROS_DISTRO}-\" pkg \"]\" }" >/tmp/rosdep.yaml
 cat /tmp/rosdep.yaml
 echo "yaml file:///tmp/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-my-packages.list -a
 
