@@ -24,8 +24,8 @@ RUN --mount=type=cache,target=/var/lib/apt,sharing=private \
     && rosdep install --from-paths /tmp/ws --ignore-src --rosdistro ${ROS_DISTRO} -y \
     && rm /etc/ros/rosdep/sources.list.d/61-customized-rosdep.list
 
-RUN --mount=type=cache,target=/var/lib/apt,sharing=private apt-get install -y \
-    python3-colcon-lcov-result python3-colcon-coveragepy-result
+RUN --mount=type=cache,target=/var/lib/apt,sharing=private apt-get update && \
+    apt-get install -y python3-colcon-lcov-result python3-colcon-coveragepy-result
 
 ENV ROS_DISTRO=${ROS_DISTRO}
 
