@@ -35,15 +35,6 @@ runs:
         platform: linux/amd64
         variant: large
 
-    - name: "humble cross"
-      uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
-      with:
-        output_dir: ${{ inputs.output_dir }}/jammy
-        pre_script: ${{ inputs.pre_script }}
-        rosdistro: humble
-        platform: linux/arm64
-        variant: large-cross
-
     - name: "jazzy"
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
       with:
