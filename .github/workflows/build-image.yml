@@ -13,10 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        target:
-          [
-            "jazzy_small"
-          ]
+        include:
+          - target: jazzy-small
+            runs-on: ubuntu-24.04
+          - target: jazzy-small-arm
+            runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
 

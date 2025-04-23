@@ -1,14 +1,26 @@
 group "default" {
     targets = [
-        "jazzy_small"
+        "jazzy-small",
+        "jazzy-small-arm"
     ]
 }
 
-target "jazzy_small" {
+target "jazzy-small" {
     target = "build_stage"
     dockerfile = "Dockerfile.native"
-    platforms = ["linux/amd64", "linux/arm64"]
+    platforms = ["linux/amd64"]
     tags = ["ghcr.io/fortefibre/buildroot:jazzy-small"]
+    args = {
+        BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
+        PACKAGE_XML = "package.small.xml"
+    }
+}
+
+target "jazzy-small-arm" {
+    target = "build_stage"
+    dockerfile = "Dockerfile.native"
+    platforms = ["linux/arm64"]
+    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small-arm"]
     args = {
         BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
         PACKAGE_XML = "package.small.xml"
