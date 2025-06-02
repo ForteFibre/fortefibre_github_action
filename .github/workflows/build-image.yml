@@ -18,6 +18,8 @@ jobs:
             runs-on: ubuntu-24.04
           - target: jazzy-small-arm
             runs-on: ubuntu-24.04-arm
+          - target: humble-small
+            runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -59,4 +61,5 @@ jobs:
       - name: Pull latest images
         run: |
           docker pull ghcr.io/fortefibre/buildroot:jazzy-small
+          docker pull ghcr.io/fortefibre/buildroot:humble-small
           docker system prune -f
