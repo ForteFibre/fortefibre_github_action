@@ -12,7 +12,7 @@ target "humble-small" {
     platforms = ["linux/amd64"]
     tags = ["ghcr.io/fortefibre/buildroot:humble-small"]
     args = {
-        BASE_IMAGE = "docker.io/library/ros:humble-perception"
+        BASE_IMAGE = "docker.io/osrf/ros:humble-simulation"
         PACKAGE_XML = "package.small.xml"
     }
 }
@@ -23,7 +23,7 @@ target "jazzy-small" {
     platforms = ["linux/amd64"]
     tags = ["ghcr.io/fortefibre/buildroot:jazzy-small"]
     args = {
-        BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
+        BASE_IMAGE = "docker.io/osrf/ros:jazzy-simulation"
         PACKAGE_XML = "package.small.xml"
     }
 }

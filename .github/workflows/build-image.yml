@@ -16,8 +16,8 @@ jobs:
         include:
           - target: jazzy-small
             runs-on: ubuntu-24.04
-          - target: jazzy-small-arm
-            runs-on: ubuntu-24.04-arm
+          # - target: jazzy-small-arm
+          #   runs-on: ubuntu-24.04-arm
           - target: humble-small
             runs-on: ubuntu-24.04
     steps:
