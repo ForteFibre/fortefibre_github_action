@@ -6,7 +6,7 @@ FROM $BASE_IMAGE as build_stage
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN wget -O /usr/share/keyrings/ros-archive-keyring.gpg https://raw.githubusercontent.com/ros/rosdistro/master/ros.key 
 
 RUN --mount=type=cache,target=/var/lib/apt,sharing=private apt-get update && \
     apt-get install -y \
