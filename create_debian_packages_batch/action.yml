@@ -33,7 +33,7 @@ runs:
         pre_script: ${{ inputs.pre_script }}
         rosdistro: humble
         platform: linux/amd64
-        variant: large
+        variant: small
 
     - name: "jazzy"
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
