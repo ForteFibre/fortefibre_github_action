@@ -49,7 +49,7 @@ jobs:
         with:
           push: true
           workdir: buildroot
-          source: buildroot
+          files: buildroot/docker-bake.hcl
           targets: ${{ matrix.target }}
           set: |
             *.cache-to=type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-cache,mode=max
