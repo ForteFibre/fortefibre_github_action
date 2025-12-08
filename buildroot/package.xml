@@ -26,7 +26,7 @@
   <depend>navigation2</depend>
   <depend>nav2_common</depend>
   <depend>nav2_core</depend>
-  <depend>nav2_util</depend>  
+  <depend>nav2_util</depend>
   <depend>pluginlib</depend>
   <depend>tf2</depend>
   <depend>tf2_geometry_msgs</depend>
@@ -36,14 +36,12 @@
   <depend>pcl_ros</depend>
   <depend>pcl_conversions</depend>
   <depend>libopencv-dev</depend>
-  <depend>libthrust-dev</depend>
   <depend>laser_filters</depend>
 
   <depend>backward_ros</depend>
   <depend>joy</depend>
   <depend>teleop_twist_joy</depend>
 
-  <depend>behaviortree_cpp_v3</depend>
   <depend>behaviortree_cpp</depend>
 
   <test_depend>ament_lint_auto</test_depend>

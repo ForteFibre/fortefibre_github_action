@@ -15,10 +15,10 @@ if [ "$1" = 'deb' ]; then
         bash -c "$INPUT_PRE_SCRIPT" || true
     fi
     bash /scripts/debian.bash
-elif [ "$1" = 'bash' ]; then
-    bash
-else
+elif [ "$1" = 'colcon' ]; then
     colcon "$@" && RET=$? || RET=$?
     chown -R $ORIG_UID:$ORIG_GID $PWD/install $PWD/build $PWD/log || true
     exit $RET
+else
+    bash
 fi
