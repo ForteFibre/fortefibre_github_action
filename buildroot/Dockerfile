@@ -1,7 +1,8 @@
-ARG ROS_DISTRO=jazzy
 ARG BASE_IMAGE=nvcr.io/nvidia/cuda:13.0.2-cudnn-devel-ubuntu24.04
 
 FROM ${BASE_IMAGE}
+
+ARG ROS_DISTRO=jazzy
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=${ROS_DISTRO}
