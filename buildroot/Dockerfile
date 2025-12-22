@@ -55,4 +55,6 @@ RUN --mount=type=bind,source=.,target=/ws \
 COPY scripts/ /scripts/
 RUN chmod +x /scripts/entrypoint.bash
 
+WORKDIR /home/ubuntu
+
 ENTRYPOINT [ "/scripts/entrypoint.bash" ]

@@ -20,5 +20,5 @@ elif [ "$1" = 'colcon' ]; then
     chown -R $ORIG_UID:$ORIG_GID $PWD/install $PWD/build $PWD/log || true
     exit $RET
 else
-    bash
+    bash --login
 fi
