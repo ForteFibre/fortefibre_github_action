@@ -59,7 +59,7 @@ jobs:
           context: ./buildroot
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY_IMAGE }}:${{ matrix.tag }},push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           cache-from: type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-${{ matrix.runs-on }}-cache
           cache-to: type=registry,ref=ghcr.io/fortefibre/buildroot-${{ matrix.target }}-${{ matrix.runs-on }}-cache,mode=max
           build-args: |
@@ -120,5 +120,4 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+          docker buildx imagetools create -t ${{ env.REGISTRY_IMAGE }}:${{ matrix.tag }} $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
