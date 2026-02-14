@@ -1,38 +1,24 @@
 group "default" {
     targets = [
-        "humble-small",
-        "jazzy-small",
-        "jazzy-small-arm"
+        "jazzy-small-amd64",
+        "jazzy-small-arm64"
     ]
 }
 
-target "humble-small" {
+target "jazzy-small-amd64" {
     target = "build_stage"
-    dockerfile = "Dockerfile.native"
+    dockerfile = "Dockerfile"
     platforms = ["linux/amd64"]
-    tags = ["ghcr.io/fortefibre/buildroot:humble-small"]
-    args = {
-        BASE_IMAGE = "docker.io/osrf/ros:humble-simulation"
-        PACKAGE_XML = "package.small.xml"
-    }
-}
-
-target "jazzy-small" {
-    target = "build_stage"
-    dockerfile = "Dockerfile.native"
-    platforms = ["linux/amd64"]
-    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small"]
     args = {
         BASE_IMAGE = "docker.io/osrf/ros:jazzy-simulation"
         PACKAGE_XML = "package.small.xml"
     }
 }
 
-target "jazzy-small-arm" {
+target "jazzy-small-arm64" {
     target = "build_stage"
-    dockerfile = "Dockerfile.native"
+    dockerfile = "Dockerfile"
     platforms = ["linux/arm64"]
-    tags = ["ghcr.io/fortefibre/buildroot:jazzy-small-arm"]
     args = {
         BASE_IMAGE = "docker.io/library/ros:jazzy-perception"
         PACKAGE_XML = "package.small.xml"
