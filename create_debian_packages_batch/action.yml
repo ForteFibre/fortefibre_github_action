@@ -23,38 +23,20 @@ inputs:
   gpg_fingerprint:
     description: "GPG fingerprint"
     required: true
+  platform:
+    description: "Platform (linux/amd64 or linux/arm64)"
+    default: "linux/amd64"
 runs:
   using: composite
   steps:
-    - name: "humble"
-      uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
-      with:
-        output_dir: ${{ inputs.output_dir }}/jammy
-        pre_script: ${{ inputs.pre_script }}
-        rosdistro: humble
-        platform: linux/amd64
-        variant: small
-
     - name: "jazzy"
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
       with:
         output_dir: ${{ inputs.output_dir }}/noble
         pre_script: ${{ inputs.pre_script }}
         rosdistro: jazzy
-        platform: linux/amd64
+        platform: ${{ inputs.platform }}
         variant: small
-
-    - name: Update APT repository (jammy)
-      uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
-      with:
-        input_dir: ${{ inputs.output_dir }}/jammy
-        s3_bucket: ${{ inputs.s3_bucket }}
-        s3_access_key_id: ${{ inputs.s3_access_key_id }}
-        s3_access_key_secret: ${{ inputs.s3_access_key_secret }}
-        s3_endpoint: ${{ inputs.s3_endpoint }}
-        gpg_private_key: ${{ inputs.gpg_private_key }}
-        gpg_fingerprint: ${{ inputs.gpg_fingerprint }}
-        codename: jammy
 
     - name: Update APT repository (noble)
       uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
