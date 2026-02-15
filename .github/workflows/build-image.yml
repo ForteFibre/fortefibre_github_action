@@ -124,7 +124,7 @@ jobs:
 
   pull:
     runs-on: GPU
-    needs: build
+    needs: merge
     steps:
       - name: Pull latest images
         run: |
