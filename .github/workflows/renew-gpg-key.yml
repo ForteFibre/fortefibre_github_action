@@ -61,7 +61,7 @@ jobs:
         if: steps.check.outputs.extended == 'true'
         run: |
           gpg --armor --export "$fingerprint" > /tmp/key.asc
-          aws s3 cp /tmp/key.asc "s3://fortefibre-apt/key.asc"
+          aws s3 cp /tmp/key.asc "s3://fortefibre-apt/fortefibre.asc"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_KEY_SECRET }}
