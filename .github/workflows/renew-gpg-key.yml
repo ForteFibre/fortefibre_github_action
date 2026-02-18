@@ -48,11 +48,12 @@ jobs:
         with:
           app-id: ${{ secrets.GH_APP_ID }}
           private-key: ${{ secrets.GH_SECRET_KEY }}
+          owner: ${{ github.repository_owner }}
 
       - name: Export updated private key and update secret
         if: steps.check.outputs.extended == 'true'
         run: |
-          gh secret set GPG_KEY --app actions --org Fortefibre --visibility all --body "$(gpg --armor --export-secret-keys "$fingerprint")"
+          gh secret set GPG_KEY --app actions --org ${{ github.repository_owner }} --visibility all --body "$(gpg --armor --export-secret-keys "$fingerprint")"
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
