@@ -16,15 +16,27 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     strategy:
       matrix:
-        runs-on: [ubuntu-24.04, ubuntu-24.04-arm]
-        base-image: [docker.io/library/ros:jazzy-perception]
-        target: [jazzy]
-        tag: [jazzy-small]
         include:
           - runs-on: ubuntu-24.04
             platform: linux/amd64
+            base-image: docker.io/library/ros:jazzy-perception
+            target: jazzy
+            tag: jazzy-small
           - runs-on: ubuntu-24.04-arm
             platform: linux/arm64
+            base-image: docker.io/library/ros:jazzy-perception
+            target: jazzy
+            tag: jazzy-small
+          - runs-on: ubuntu-24.04
+            platform: linux/amd64
+            base-image: docker.io/library/ros:lyrical-perception
+            target: lyrical
+            tag: lyrical-small
+          - runs-on: ubuntu-24.04-arm
+            platform: linux/arm64
+            base-image: docker.io/library/ros:lyrical-perception
+            target: lyrical
+            tag: lyrical-small
     steps:
       - uses: actions/checkout@v6
 
@@ -93,6 +105,7 @@ jobs:
       matrix:
         include:
           - tag: jazzy-small
+          - tag: lyrical-small
     steps:
       - name: Download digests
         uses: actions/download-artifact@v8
@@ -129,4 +142,5 @@ jobs:
       - name: Pull latest images
         run: |
           docker pull ghcr.io/fortefibre/buildroot:jazzy-small
+          docker pull ghcr.io/fortefibre/buildroot:lyrical-small
           docker system prune -f
