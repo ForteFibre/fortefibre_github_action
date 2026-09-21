@@ -38,7 +38,7 @@ jobs:
             target: lyrical
             tag: lyrical-small
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Change data-dir
         run: |
