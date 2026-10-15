@@ -26,6 +26,11 @@ inputs:
   platform:
     description: "Platform (linux/amd64 or linux/arm64)"
     default: "linux/amd64"
+  fortefibre_apt:
+    description: >-
+      Use the ForteFibre apt repository inside the build container via OIDC
+      (auto / true / false). See create_debian_packages.
+    default: "auto"
 runs:
   using: composite
   steps:
@@ -37,6 +42,7 @@ runs:
         rosdistro: jazzy
         platform: ${{ inputs.platform }}
         variant: small
+        fortefibre_apt: ${{ inputs.fortefibre_apt }}
 
     - name: Update APT repository (noble)
       uses: ForteFibre/fortefibre_github_action/update_apt_repo@main

@@ -18,12 +18,59 @@ inputs:
   pre_script:
     description: "Bash script to execute before build"
     default: "echo OK"
+  fortefibre_apt:
+    description: >-
+      Use the ForteFibre apt repository (apt.fortefibre.net) inside the build
+      container, authenticated with the GitHub Actions OIDC token.
+      `auto` uses it only when the job grants `permissions: id-token: write`,
+      `true` requires it, and `false` never uses it.
+      The repository must be in the apt repository's OIDC allowlist.
+    default: "auto"
 runs:
   using: composite
   steps:
+    - name: Decide whether to use the ForteFibre apt repository
+      id: decide
+      run: |
+        case "$INPUT_FORTEFIBRE_APT" in
+          true)
+            echo "use=true" >> "$GITHUB_OUTPUT"
+            ;;
+          auto)
+            # ACTIONS_ID_TOKEN_REQUEST_URL は id-token: write のときだけ渡される
+            if [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ]; then
+              echo "use=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::notice::id-token: write is not granted, so the ForteFibre apt repository is not configured by OIDC."
+              echo "use=false" >> "$GITHUB_OUTPUT"
+            fi
+            ;;
+          false)
+            echo "use=false" >> "$GITHUB_OUTPUT"
+            ;;
+          *)
+            echo "::error::fortefibre_apt must be auto, true or false (got '$INPUT_FORTEFIBRE_APT')."
+            exit 1
+            ;;
+        esac
+      env:
+        INPUT_FORTEFIBRE_APT: ${{ inputs.fortefibre_apt }}
+      shell: bash
+
+    # ホストの apt は触らず、bundle を作るだけにする。
+    # bundle はコンテナに mount し、buildroot の entrypoint が setup.sh を実行する。
+    - name: Get credentials for the ForteFibre apt repository
+      id: apt
+      if: steps.decide.outputs.use == 'true'
+      uses: ForteFibre/apt-repository/.github/actions/setup-apt@main
+      with:
+        configure-host: "false"
+        ros-distro: ${{ inputs.rosdistro }}
+
     - name: build
       run: |
         docker run --rm -v $PWD:/workspace -w /workspace -e INPUT_OUT_DIR -e INPUT_PRE_SCRIPT \
+          ${{ steps.apt.outputs.docker-run-args }} \
           --platform ${{ inputs.platform }} \
           ghcr.io/fortefibre/buildroot:${{ inputs.rosdistro }}-${{ inputs.variant }} deb
       env:

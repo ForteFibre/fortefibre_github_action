@@ -9,6 +9,12 @@ fi
 
 source /opt/ros/${ROS_DISTRO}/setup.bash
 
+# create_debian_packages action が OIDC で得た apt.fortefibre.net の資格情報を
+# mount していれば、apt と rosdep に設定する。pre_script と違い、失敗したらここで止める
+if [ -x /run/fortefibre-apt/setup.sh ]; then
+    /run/fortefibre-apt/setup.sh
+fi
+
 # Create deb or colcon build
 if [ "$1" = 'deb' ]; then
     if [ -n "$INPUT_PRE_SCRIPT" ]; then
