@@ -31,10 +31,36 @@ inputs:
       Use the ForteFibre apt repository inside the build container via OIDC
       (auto / true / false). See create_debian_packages.
     default: "auto"
+  rosdistros:
+    description: >-
+      Space-separated ROS distros to build (jazzy / lyrical).
+      jazzy is uploaded to noble, lyrical to resolute.
+      jazzy is built and uploaded first, so a lyrical failure does not block noble.
+    default: "jazzy"
 runs:
   using: composite
   steps:
+    - name: Check rosdistros
+      run: |
+        if [ -z "${INPUT_ROSDISTROS//[[:space:]]/}" ]; then
+          echo "::error::rosdistros is empty."
+          exit 1
+        fi
+        for distro in $INPUT_ROSDISTROS; do
+          case "$distro" in
+            jazzy | lyrical) ;;
+            *)
+              echo "::error::rosdistros supports only jazzy and lyrical (got '$distro')."
+              exit 1
+              ;;
+          esac
+        done
+      env:
+        INPUT_ROSDISTROS: ${{ inputs.rosdistros }}
+      shell: bash
+
     - name: "jazzy"
+      if: contains(format(' {0} ', inputs.rosdistros), ' jazzy ')
       uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
       with:
         output_dir: ${{ inputs.output_dir }}/noble
@@ -45,6 +71,7 @@ runs:
         fortefibre_apt: ${{ inputs.fortefibre_apt }}
 
     - name: Update APT repository (noble)
+      if: contains(format(' {0} ', inputs.rosdistros), ' jazzy ')
       uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
       with:
         input_dir: ${{ inputs.output_dir }}/noble
@@ -55,3 +82,27 @@ runs:
         gpg_private_key: ${{ inputs.gpg_private_key }}
         gpg_fingerprint: ${{ inputs.gpg_fingerprint }}
         codename: noble
+
+    - name: "lyrical"
+      if: contains(format(' {0} ', inputs.rosdistros), ' lyrical ')
+      uses: ForteFibre/fortefibre_github_action/create_debian_packages@main
+      with:
+        output_dir: ${{ inputs.output_dir }}/resolute
+        pre_script: ${{ inputs.pre_script }}
+        rosdistro: lyrical
+        platform: ${{ inputs.platform }}
+        variant: small
+        fortefibre_apt: ${{ inputs.fortefibre_apt }}
+
+    - name: Update APT repository (resolute)
+      if: contains(format(' {0} ', inputs.rosdistros), ' lyrical ')
+      uses: ForteFibre/fortefibre_github_action/update_apt_repo@main
+      with:
+        input_dir: ${{ inputs.output_dir }}/resolute
+        s3_bucket: ${{ inputs.s3_bucket }}
+        s3_access_key_id: ${{ inputs.s3_access_key_id }}
+        s3_access_key_secret: ${{ inputs.s3_access_key_secret }}
+        s3_endpoint: ${{ inputs.s3_endpoint }}
+        gpg_private_key: ${{ inputs.gpg_private_key }}
+        gpg_fingerprint: ${{ inputs.gpg_fingerprint }}
+        codename: resolute
